@@ -63,12 +63,13 @@ local Window = WindUI:CreateWindow({
                 Desc  = "Click to copy link",
                 Icon  = "key-round",
                 Type  = "junkiedevelopment",
-                ServiceId = "JinHub GetKey",
+                ServiceId = "Be-Key",
                 ApiKey    = "ea90a88b-940d-4ecd-a4ef-754eb6268daf",
                 Provider  = "Work.Ink",
             }
         }
     }
 })
+
 
 
