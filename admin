@@ -81,7 +81,7 @@ local Window = WindUI:CreateWindow({
             { 
                 Type = "junkiedev",
                 ServiceId = "Be-Key",
-                ApiKey = "4a66e74d-9e84-4e75-9c1d-306253968b7b",
+                ApiKey = "ea90a88b-940d-4ecd-a4ef-754eb6268daf",
                 Provider = "Work.Ink",
             }    
         }
