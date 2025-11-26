@@ -1,95 +1,73 @@
-
+-- WindUI loader
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
---dont change anything until you know what you do
-WindUI.Services.junkiedev = {
+
+local started = false
+local function StartMain()
+    if started then return end
+    started = true
+    -- YOUR CODE
+end
+
+WindUI.Services.junkiedevelopment = {
     Name = "Junkie Development",
-    Icon = "bug-off",
+    Icon = "shield-check",
     Args = { "ServiceId", "ApiKey", "Provider" },
+
     New = function(ServiceId, ApiKey, Provider)
-        JunkieProtected.API_KEY = ApiKey
-        JunkieProtected.PROVIDER = Provider
         JunkieProtected.SERVICE_ID = ServiceId
+        JunkieProtected.API_KEY    = ApiKey
+        JunkieProtected.PROVIDER   = Provider
 
-        local function ValidateKey(key)
+        local function Verify(key)
+            local km = JunkieProtected.IsKeylessMode and JunkieProtected.IsKeylessMode() or nil
+            local keyless = (type(km) == "table" and km.keyless_mode) 
+            if keyless then
+                task.defer(StartMain)
+                return true, "Keyless mode"
+            end
             if not key or key == "" then
-                print("❌ No key provided!")
-                game.Players.LocalPlayer:Kick("No key provided. Please get a key.")
-                return false
+                return false, "No key provided"
             end
-
-            local keylessCheck = JunkieProtected.IsKeylessMode()
-            if keylessCheck and keylessCheck.keyless_mode then
-                print("Keyless mode enabled - Starting script...")
-                return true
-            end
-
-            local result = JunkieProtected.ValidateKey({ Key = key })
-            if result == "valid" then
-                print("Key is valid! Starting script...")
-                load()
-                
-                if _G.JD_IsPremium then
-                    print("🌟 Premium user detected!")
-                else
-                    print("📝 Standard user")
-                end
-                
-                return true
+            local r = JunkieProtected.ValidateKey and JunkieProtected.ValidateKey({ Key = key })
+            local ok = r == "valid"
+            if ok then
+                task.defer(StartMain)
+                return true, "Key valid"
             else
-                local keyLink = JunkieProtected.GetKeyLink()
-                print("❌ Invalid key!")
-                game.Players.LocalPlayer:Kick("Invalid key. Get one from: " .. keyLink)
-                return false
+                return false, "Invalid key"
             end
         end
 
-        local function copyLink()
-            local link = JunkieProtected.GetKeyLink()
-            print("Get your key: " .. link)
-            if setclipboard then
-                setclipboard(link)
-            end
+        local function Copy()
+            local link = (JunkieProtected.GetKeyLink and JunkieProtected.GetKeyLink()) or "No link"
+            if setclipboard then setclipboard(link) end
+            return link
         end
 
-        return {
-            Verify = ValidateKey,
-            Copy = copyLink
-        }
+        return { Verify = Verify, Copy = Copy }
     end
 }
 
---//CONTIUNE HERE!!
-
 local Window = WindUI:CreateWindow({
-    Title = "My Super Hub",
-    Icon = "door-open",
-    Author = "by .ftgs and .ftgs",
-    Folder = "MySuperHub",
-    Size = UDim2.fromOffset(580, 460),
-    MinSize = Vector2.new(560, 350),
-    MaxSize = Vector2.new(850, 560),
-    Transparent = true,
+    Title = "JinHub",
     Theme = "Dark",
+    Transparent = true,
     Resizable = true,
-    SideBarWidth = 200,
-    BackgroundImageTransparency = 0.42,
-    HideSearchBar = true,
-    ScrollBarEnabled = false,
-    KeySystem = {                                                               
-        Note = "hi, im uerd.",                     
-        API = {                                                       
-            { 
-                Type = "junkiedev",
-                ServiceId = "Be-Key",
-                ApiKey = "ea90a88b-940d-4ecd-a4ef-754eb6268daf",
-                Provider = "Work.Ink",
-            }    
+
+    KeySystem = {
+        Note = "Enter your key to continue.",
+        SaveKey = true,
+        API = {
+            {
+                Title = "JinHub Key",
+                Desc  = "Click to copy link",
+                Icon  = "key-round",
+                Type  = "junkiedevelopment",
+                ServiceId = "JinHub GetKey",
+                ApiKey    = "4a66e74d-9e84-4e75-9c1d-306253968b7b",
+                Provider  = "Work.Ink",
+            }
         }
     }
-})
-local Tab = Window:Tab({
-    Title = "Tab Title",
-    Icon = "bird", 
-    Locked = false,
 })
 
